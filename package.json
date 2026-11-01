@@ -2,7 +2,7 @@
   "name": "my-portfolio",
   "version": "1.0.0",
   "private": true,
-  "description": "Personal portfolio: single self-contained HTML file, Tailwind compiled at build time.",
+  "description": "Personal portfolio of Inamul Hasan: one HTML page, Tailwind compiled at build time, generative space score.",
   "scripts": {
     "build": "node scripts/build.mjs",
     "verify": "node scripts/verify.mjs",
@@ -15,5 +15,10 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "homepage": "https://hackx-in.github.io/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HackX-IN/HackX-IN.github.io.git"
   }
 }

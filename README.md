@@ -37,7 +37,7 @@ Tune it through the constants at the top (`BPM`, `PROGRESSION`, `ARP_PATTERNS`, 
 
 Browsers only allow audio after a user gesture, so playback starts when a visitor presses the badge. The preference is remembered in `localStorage` and resumed on the first tap or key press. Audio is suspended in background tabs and the context is closed when stopped.
 
-The badge sits outside `#nav` on purpose: the header uses `mix-blend-mode: difference`, which would invert the artwork. Its classes are prefixed `sb-` because the page already has a `.chip` component.
+The astronaut badge spins while the music plays and rests when paused (no icons, one animation). It sits outside `#nav` on purpose: the header uses `mix-blend-mode: difference`, which would invert the artwork. Its classes are prefixed `sb-` because the page already has a `.chip` component.
 
 ## Security
 
