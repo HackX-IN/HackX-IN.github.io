@@ -8,7 +8,7 @@ Live: https://hackx-in.github.io/
 
 - Signature SVG preloader, scroll-drawn "thread" that links the sections, pull-to-untangle contact interaction
 - Interactive project cards with small micro-animations
-- Optional ambient space score, played from an astronaut badge next to MENU: synthesised live with the Web Audio API, so there are no audio files and no copyright. Off by default, never autoplays
+- Optional cinematic space score, played from a spinning astronaut badge next to MENU: synthesised live with the Web Audio API, so there are no audio files and no copyright. Off by default, never autoplays, plays quietly
 - Keyboard accessible (focus trap in the modal, Esc to close) and honors `prefers-reduced-motion`
 - Single output file, about 90 KB, no framework and no runtime dependencies
 
@@ -31,9 +31,16 @@ Pushing to `main` runs `.github/workflows/pages.yml` (install, build, verify, de
 
 ## Music
 
-`src/score.js` is a small generative engine that plays an original, endlessly evolving piece in the spirit of cinematic space-organ music: a cathedral-organ pad, a slow rolling arpeggio in 12/8, a ticking clock, a sub drone, a rare breathy lead and the odd deep boom. Four chords (Am(add9), Fmaj7, Dm9, Esus4) loop, while a 16-bar intensity arc fades layers in and out and opens the filter as it builds, so it swells and recedes over about 75 seconds. It is inlined into the page at build time.
+`src/score.js` is a small generative engine that plays an original, driving piece in the spirit of cinematic organ music. It is synthesised live, so nothing is sampled and nothing needs licensing.
 
-Tune it through the constants at the top (`BPM`, `PROGRESSION`, `ARP_PATTERNS`, `INTENSITY_CYCLE_BARS`) and the levels in the `play*` functions. The pure parts (timing, intensity arc, layer gating, melody picking, bar planning) are covered by `tests/score.test.mjs`.
+- **Feel:** 3/4 at 95 BPM on a sixteenth-note grid.
+- **Harmony:** one chord per bar, looping Am - F - C - G, then Am - G - F - E.
+- **Pulse:** two staccato ostinatos interlock into continuous sixteenths. Ostinato A (left) runs up the chord's notes in the first half of the loop and down in the second. Ostinato B (right, an octave up) repeats every 7 notes against 6 per bar, so it phases slowly against the bar and only realigns every 7 bars.
+- **Colour:** a warm organ pad, a sine bass, a soft clock tick on every beat, and a rare lead with vibrato.
+- **Shape:** a 32-bar intensity arc fades layers in and out and opens the tone filter as it builds, so it swells and recedes over about a minute.
+- **Level:** background by design (about -26 dBFS RMS at the climax, peaks under 0.4).
+
+Tune it through the constants at the top (`BPM`, `PROGRESSION`, `OSTINATO_*`, `INTENSITY_CYCLE_BARS`, `DEFAULT_VOLUME`) and the levels in the `play*` functions. The pure parts (timing, intensity arc, ostinato interlock and phasing, layer gating, melody picking) are covered by `tests/score.test.mjs`.
 
 Browsers only allow audio after a user gesture, so playback starts when a visitor presses the badge. The preference is remembered in `localStorage` and resumed on the first tap or key press. Audio is suspended in background tabs and the context is closed when stopped.
 
