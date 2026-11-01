@@ -68,18 +68,42 @@ section{position:relative}
 .js.is-ready #nav{opacity:1}
 .logo{font-family:'Inter Tight',sans-serif;font-weight:900;font-size:22px;letter-spacing:-.06em}
 #menu-btn{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:10px 0 10px 16px}
-.nav-right{display:flex;align-items:center;gap:4px}
-#sound-btn{display:inline-flex;align-items:center;gap:9px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:10px 12px;transition:opacity .3s}
+#menu-btn{min-width:64px;text-align:right}
+#sound-btn{position:fixed;top:12px;right:calc(var(--pad) + 64px + 10px);z-index:61;width:44px;height:44px;padding:0;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .8s var(--ease) .1s,transform .3s var(--ease)}
 #sound-btn[hidden]{display:none}
-.eq{display:inline-flex;align-items:flex-end;gap:2px;height:12px}
-.eq i{display:block;width:2px;height:12px;background:currentColor;border-radius:1px;transform-origin:bottom;transform:scaleY(.22);transition:transform .4s var(--ease)}
-#sound-btn[aria-pressed="true"] .eq i{animation:eq 1.15s ease-in-out infinite alternate}
-#sound-btn[aria-pressed="true"] .eq i:nth-child(2){animation-duration:.8s;animation-delay:-.3s}
-#sound-btn[aria-pressed="true"] .eq i:nth-child(3){animation-duration:1.4s;animation-delay:-.7s}
-#sound-btn[aria-pressed="true"] .eq i:nth-child(4){animation-duration:.95s;animation-delay:-.15s}
-#sound-btn.hint{animation:hint 1.8s ease-in-out 3}
-@keyframes eq{from{transform:scaleY(.22)}to{transform:scaleY(1)}}
-@keyframes hint{50%{opacity:.35}}
+.js #sound-btn{opacity:0}
+.js.is-ready #sound-btn{opacity:1}
+#sound-btn:hover{transform:scale(1.07)}
+#sound-btn:focus-visible{outline:2px solid var(--red);outline-offset:5px}
+/* paused: frozen in space, dimmed. playing: drifting, lit, sound rings, twinkling stars */
+.sb-astro{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:#f0f0f0;animation:sb-drift 7s ease-in-out infinite alternate;animation-play-state:paused;filter:saturate(.6) brightness(.78);box-shadow:0 0 0 1px rgba(240,235,228,.28);transition:filter .7s var(--ease),box-shadow .7s var(--ease)}
+.sb-astro img{display:block;width:100%;height:100%}
+#sound-btn[aria-pressed="true"] .sb-astro{animation-play-state:running;filter:none;box-shadow:0 0 0 1px rgba(240,235,228,.55),0 0 20px rgba(252,56,20,.32)}
+.sb-orbit{position:absolute;inset:0;border-radius:50%;pointer-events:none}
+.sb-orbit::before,.sb-orbit::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid var(--red);opacity:0}
+#sound-btn[aria-pressed="true"] .sb-orbit::before{animation:sb-ring 3s ease-out infinite}
+#sound-btn[aria-pressed="true"] .sb-orbit::after{animation:sb-ring 3s ease-out 1.5s infinite}
+#sound-btn.hint .sb-orbit::before{animation:sb-ring 2s ease-out 3}
+.sb-star{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--red);opacity:0;pointer-events:none}
+.sb-star.s1{left:-9px;top:7px}
+.sb-star.s2{right:-7px;top:1px;width:2px;height:2px}
+.sb-star.s3{left:-3px;bottom:-6px;width:2px;height:2px}
+#sound-btn[aria-pressed="true"] .sb-star{animation:sb-twinkle 2.2s ease-in-out infinite}
+#sound-btn[aria-pressed="true"] .sb-star.s2{animation-delay:.7s}
+#sound-btn[aria-pressed="true"] .sb-star.s3{animation-delay:1.4s}
+.sb-state{position:absolute;right:-4px;bottom:-4px;width:18px;height:18px;border-radius:50%;background:var(--cream);color:var(--ink);display:grid;place-items:center;box-shadow:0 0 0 2px var(--ink);pointer-events:none}
+.sb-state svg{width:9px;height:9px;margin-left:1px}
+.sb-eq{display:none;align-items:flex-end;gap:1.5px;height:8px}
+.sb-eq i{display:block;width:1.5px;height:8px;background:currentColor;border-radius:1px;transform-origin:bottom;transform:scaleY(.25)}
+#sound-btn[aria-pressed="true"] .sb-state svg{display:none}
+#sound-btn[aria-pressed="true"] .sb-eq{display:inline-flex}
+#sound-btn[aria-pressed="true"] .sb-eq i{animation:sb-eq 1.1s ease-in-out infinite alternate}
+#sound-btn[aria-pressed="true"] .sb-eq i:nth-child(2){animation-duration:.75s;animation-delay:-.3s}
+#sound-btn[aria-pressed="true"] .sb-eq i:nth-child(3){animation-duration:1.35s;animation-delay:-.7s}
+@keyframes sb-drift{0%{transform:translate(0,0) rotate(-3deg)}50%{transform:translate(1px,-3px) rotate(2deg)}100%{transform:translate(-1px,2px) rotate(5deg)}}
+@keyframes sb-ring{0%{transform:scale(1);opacity:.75}100%{transform:scale(2);opacity:0}}
+@keyframes sb-twinkle{0%,100%{opacity:0;transform:scale(.5)}50%{opacity:1;transform:scale(1.3)}}
+@keyframes sb-eq{from{transform:scaleY(.25)}to{transform:scaleY(1)}}
 #menu{position:fixed;inset:0;z-index:55;background:var(--ink);color:var(--cream);display:flex;flex-direction:column;justify-content:center;padding:90px var(--pad) 40px;opacity:0;visibility:hidden;transition:opacity .45s var(--ease),visibility 0s .45s}
 #menu.open{opacity:1;visibility:visible;transition:opacity .45s var(--ease)}
 #menu a.big{display:block;font-family:'Inter Tight',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:-.05em;line-height:.98;font-size:clamp(2.6rem,11vw,6.5rem);transform:translateY(24px);opacity:0;transition:transform .6s var(--ease),opacity .6s var(--ease),color .2s}
@@ -332,13 +356,16 @@ section{position:relative}
 
 <header id="nav" class="fixed inset-x-0 top-0 z-[60] flex h-[68px] items-center justify-between px-[var(--pad)]">
   <a href="#top" class="logo" aria-label="Inamul, back to top" data-top>IN</a>
-  <div class="nav-right">
-    <button id="sound-btn" type="button" aria-pressed="false" aria-label="Lofi music" hidden>
-      <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Lofi</span>
-    </button>
-    <button id="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
-  </div>
+  <button id="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
 </header>
+
+<!-- Music control: the astronaut badge. Sits outside #nav on purpose: the header uses mix-blend-mode:difference, which would invert the artwork. -->
+<button id="sound-btn" type="button" aria-pressed="false" aria-label="Ambient music" title="Play music" hidden>
+  <span class="sb-orbit" aria-hidden="true"></span>
+  <span class="sb-star s1" aria-hidden="true"></span><span class="sb-star s2" aria-hidden="true"></span><span class="sb-star s3" aria-hidden="true"></span>
+  <span class="sb-astro" aria-hidden="true"><img src="data:image/webp;base64,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" width="44" height="44" alt="" decoding="async"></span>
+  <span class="sb-state" aria-hidden="true"><svg viewBox="0 0 10 10"><path d="M2.6 1.2v7.6L8.8 5z" fill="currentColor"/></svg><span class="sb-eq"><i></i><i></i><i></i></span></span>
+</button>
 
 <nav id="menu" aria-label="Main menu" aria-hidden="true">
   <a class="big" href="#p1" data-menu-link>Work</a>
@@ -595,7 +622,7 @@ section{position:relative}
       <p class="mono imprint-sub" style="margin-top:14px;font-size:11px;line-height:1.8">Now: building Vocs. Learning Rust and on-device AI.</p>
       <p class="mono imprint-sub" style="margin-top:14px;font-size:11px;line-height:1.8">React · Next.js · React Native · Expo · Tauri<br>FastAPI · Node.js · PostgreSQL · Supabase · Firebase</p>
       <p class="mono imprint-sub" style="margin-top:14px;font-size:11px;line-height:1.8">GitHub achievements: Pull Shark ×3 · Pair Extraordinaire ×3 · Quickdraw · YOLO</p>
-      <p class="mono imprint-sub" style="margin-top:14px;font-size:11px;line-height:1.8">Music: original lofi, synthesised live in your browser. No samples, nothing to license.</p>
+      <p class="mono imprint-sub" style="margin-top:14px;font-size:11px;line-height:1.8">Music: an original ambient score, synthesised live in your browser. No samples, nothing to license.</p>
 
       <nav class="socials" aria-label="Social links">
         <a href="https://github.com/HackX-IN" target="_blank" rel="noopener noreferrer"><span>GitHub</span><em>HackX-IN</em><b>↗</b></a>
@@ -649,7 +676,7 @@ section{position:relative}
     </form>
   </div>
 </div>
-<!--LOFI_JS-->
+<!--SCORE_JS-->
 <script>
 (() => {
 'use strict';
@@ -1258,16 +1285,18 @@ form.addEventListener('submit', e => {
 $$('input,textarea', form).forEach(el => el.addEventListener('input', () => el.closest('.fld').classList.remove('bad')));
 
 /* ================================================================
-   Sound: original generative lofi (src/lofi.js), opt-in, never autoplays
+   Sound: original generative score (src/score.js). Opt-in, never autoplays.
 ================================================================ */
-const SOUND_KEY = 'lofi-pref';
+const SOUND_KEY = 'music-pref';
 const readPref = () => { try { return localStorage.getItem(SOUND_KEY); } catch (_) { return null; } };
 const writePref = value => { try { localStorage.setItem(SOUND_KEY, value); } catch (_) { /* storage blocked: fine */ } };
 
 function initSound() {
   const btn = $('#sound-btn');
-  if (!btn || !window.Lofi || !Lofi.isSupported()) return;       // no Web Audio: the button stays hidden
-  const player = Lofi.createPlayer({ onChange: on => btn.setAttribute('aria-pressed', String(on)) });
+  if (!btn || !window.Score || !Score.isSupported()) return;      // no Web Audio: the badge stays hidden
+  const player = Score.createPlayer({
+    onChange: on => { btn.setAttribute('aria-pressed', String(on)); btn.title = on ? 'Pause music' : 'Play music'; }
+  });
   btn.hidden = false;
   btn.addEventListener('click', async () => {
     btn.classList.remove('hint');
@@ -1279,7 +1308,7 @@ function initSound() {
     const resume = () => { removeEventListener('pointerdown', resume); removeEventListener('keydown', resume); player.start(); };
     addEventListener('pointerdown', resume); addEventListener('keydown', resume);
   } else if (!reduce) {
-    setTimeout(() => btn.classList.add('hint'), 6500);           // a gentle nudge, three pulses only
+    setTimeout(() => btn.classList.add('hint'), 6500);            // a gentle nudge: three pulses, once
   }
 }
 

@@ -8,7 +8,7 @@ Live: https://hackx-in.github.io/
 
 - Signature SVG preloader, scroll-drawn "thread" that links the sections, pull-to-untangle contact interaction
 - Interactive project cards with small micro-animations
-- Optional lofi soundtrack (LOFI button in the nav): synthesised live with the Web Audio API, so there are no audio files and no copyright. Off by default, never autoplays
+- Optional ambient space score, played from an astronaut badge next to MENU: synthesised live with the Web Audio API, so there are no audio files and no copyright. Off by default, never autoplays
 - Keyboard accessible (focus trap in the modal, Esc to close) and honors `prefers-reduced-motion`
 - Single output file, about 90 KB, no framework and no runtime dependencies
 
@@ -19,7 +19,7 @@ npm ci
 npm run build      # -> dist/index.html (Tailwind purged, minified, inlined)
 npm run verify     # sanity checks on the built file
 npm run check      # tests + build + verify (this is what CI runs)
-npm test           # unit tests for the music engine (node:test, no extra deps)
+npm test           # unit tests for the score engine (node:test, no extra deps)
 npm run preview    # build and serve dist/ locally
 ```
 
@@ -31,9 +31,13 @@ Pushing to `main` runs `.github/workflows/pages.yml` (install, build, verify, de
 
 ## Music
 
-`src/lofi.js` is a small generative engine: jazzy chord loop (Fmaj9, Em7, Dm9, G13, Cmaj9, Am9, Dm9, G7b9 at 72 BPM), sparse melody, swung boom-bap drums, tape wobble, echo, reverb and vinyl crackle. It is inlined into the page at build time. Tune it via the constants at the top (`BPM`, `SWING`, `PROGRESSION`) and the voice levels in the `play*` functions; the pure parts (timing, melody picking, bar planning) are covered by `tests/lofi.test.mjs`.
+`src/score.js` is a small generative engine that plays an original, endlessly evolving piece in the spirit of cinematic space-organ music: a cathedral-organ pad, a slow rolling arpeggio in 12/8, a ticking clock, a sub drone, a rare breathy lead and the odd deep boom. Four chords (Am(add9), Fmaj7, Dm9, Esus4) loop, while a 16-bar intensity arc fades layers in and out and opens the filter as it builds, so it swells and recedes over about 75 seconds. It is inlined into the page at build time.
 
-Browsers only allow audio after a user gesture, so playback starts when a visitor presses LOFI. The preference is remembered in `localStorage` and resumed on the first tap or key press. Audio is suspended in background tabs and the context is closed when stopped.
+Tune it through the constants at the top (`BPM`, `PROGRESSION`, `ARP_PATTERNS`, `INTENSITY_CYCLE_BARS`) and the levels in the `play*` functions. The pure parts (timing, intensity arc, layer gating, melody picking, bar planning) are covered by `tests/score.test.mjs`.
+
+Browsers only allow audio after a user gesture, so playback starts when a visitor presses the badge. The preference is remembered in `localStorage` and resumed on the first tap or key press. Audio is suspended in background tabs and the context is closed when stopped.
+
+The badge sits outside `#nav` on purpose: the header uses `mix-blend-mode: difference`, which would invert the artwork. Its classes are prefixed `sb-` because the page already has a `.chip` component.
 
 ## Security
 

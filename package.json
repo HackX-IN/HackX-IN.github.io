@@ -8,7 +8,7 @@
     "verify": "node scripts/verify.mjs",
     "check": "npm test && npm run build && npm run verify",
     "preview": "npm run build && npx --yes serve dist",
-    "test": "node --test tests/lofi.test.mjs"
+    "test": "node --test tests/score.test.mjs"
   },
   "devDependencies": {
     "tailwindcss": "3.4.17"
