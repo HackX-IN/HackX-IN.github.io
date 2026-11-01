@@ -252,7 +252,7 @@ section{position:relative}
 .imprint-sub{font-size:12px;color:#77726a;margin-top:8px}
 #fp{width:min(78vw,380px);margin:clamp(30px,8vw,70px) auto 0;display:block;overflow:visible}
 #fp path{fill:none;stroke:var(--red);stroke-width:1.5;stroke-linecap:round}
-#contact{min-height:100svh;padding:clamp(70px,13vw,130px) 0 36px;display:flex;flex-direction:column}
+#contact{min-height:100svh;padding:clamp(70px,13vw,130px) 0 max(56px,calc(28px + env(safe-area-inset-bottom)));display:flex;flex-direction:column}
 .contact-h{font-size:clamp(2.6rem,12.4vw,9rem)}
 .cta{display:inline-flex;align-items:center;gap:.5em;font-family:'Inter Tight',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:-.04em;font-size:clamp(1.05rem,4.4vw,1.5rem);border-bottom:2px solid var(--cream);padding-bottom:5px;margin-top:clamp(26px,6vw,48px);transition:color .2s,border-color .2s,gap .3s var(--ease)}
 .cta:hover{color:var(--red);border-color:var(--red);gap:.8em}
@@ -651,6 +651,7 @@ section{position:relative}
     </form>
   </div>
 </div>
+<!--PULL_JS-->
 <!--SCORE_JS-->
 <script>
 (() => {
@@ -1142,7 +1143,7 @@ function initAutomation() {
    Contact: pull to untangle → modal
 ================================================================ */
 const modal = $('#modal'), card = $('.m-card', modal);
-let tangleBusy = false, animToken = 0, dragging = false, startY = 0, moved = 0, lastFocus = null;
+let tangleBusy = false, animToken = 0, dragging = false, startX = 0, startY = 0, startTime = 0, moved = 0, lastFocus = null;
 
 function setLabel(txt) { pullLabel.textContent = txt; }
 
@@ -1175,23 +1176,25 @@ async function springBack() {
   handle.classList.remove('busy'); setLabel('Pull to untangle');
 }
 
+/* Gesture maths lives in src/pull.js (unit-tested): any direction counts, short throw, flick finishes. */
 handle.addEventListener('pointerdown', e => {
   if (modal.classList.contains('open')) return;
-  dragging = true; startY = e.clientY; moved = 0; animToken++; tangleBusy = false;
+  dragging = true; startX = e.clientX; startY = e.clientY; startTime = performance.now(); moved = 0;
+  animToken++; tangleBusy = false;
   handle.setPointerCapture(e.pointerId); handle.classList.add('busy');
 });
 handle.addEventListener('pointermove', e => {
   if (!dragging) return;
-  const d = Math.max(0, e.clientY - startY);
-  moved = Math.max(moved, Math.abs(e.clientY - startY));
-  const full = Math.min(200, vh * .3);
-  q = clamp(d / full, 0, 1); pull = Math.min(48, d * .3);
+  const gesture = Pull.pullProgress(e.clientX - startX, e.clientY - startY, vh);
+  moved = Math.max(moved, gesture.distance);
+  q = gesture.progress; pull = gesture.offset;
   if (q > .02) setLabel('Untangling…');
   renderTangle();
 });
 const endDrag = () => {
   if (!dragging) return; dragging = false;
-  if (moved < 6 || q >= .7) completeUntangle(); else springBack();
+  const action = Pull.releaseAction({ moved, progress: q, elapsedMs: performance.now() - startTime });
+  if (action === 'complete') completeUntangle(); else springBack();
 };
 handle.addEventListener('pointerup', endDrag);
 handle.addEventListener('pointercancel', endDrag);

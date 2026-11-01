@@ -19,11 +19,11 @@ npm ci
 npm run build      # -> dist/index.html (Tailwind purged, minified, inlined)
 npm run verify     # sanity checks on the built file
 npm run check      # tests + build + verify (this is what CI runs)
-npm test           # unit tests for the score engine (node:test, no extra deps)
+npm test           # unit tests for the score engine and the pull gesture (node:test, no extra deps)
 npm run preview    # build and serve dist/ locally
 ```
 
-Edit `src/index.html`. Tailwind is configured in `tailwind.config.js` (palette and fonts); `src/tailwind.css` only holds the directives. The `<!--TAILWIND_CSS-->` placeholder in `<head>` is replaced with the compiled stylesheet by `scripts/build.mjs`. Bespoke effects (thread, preloader, tangle) live in the page's own `<style>`/`<script>`.
+Edit `src/index.html`. Tailwind is configured in `tailwind.config.js` (palette and fonts); `src/tailwind.css` only holds the directives. The `<!--TAILWIND_CSS-->` placeholder in `<head>` is replaced with the compiled stylesheet by `scripts/build.mjs`. Bespoke effects (thread, preloader, tangle) live in the page's own `<style>`/`<script>`. The pull-to-untangle gesture maths (`src/pull.js`, tested in `tests/pull.test.mjs`) is inlined the same way: the pull counts in any direction, the throw is short and scales with the viewport, and a tap or quick flick also finishes it, because on phones the handle sits only ~100px above the bottom edge.
 
 ## Deploy
 

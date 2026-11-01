@@ -17,6 +17,8 @@ const checks = [
   ['no placeholder left behind', !html.includes('<!--TAILWIND_CSS-->')],
   ['single file under 200 KB', html.length < 200 * 1024],
   ['no innerHTML (XSS surface)', !/\.innerHTML\s*=/.test(html)],
+  ['pull gesture module inlined, placeholder gone', /<script id="pull">[\s\S]*releaseAction[\s\S]*<\/script>/.test(html) && !html.includes('<!--PULL_JS-->')],
+  ['untangle uses the shared gesture maths (any-direction pull)', /Pull\.pullProgress\(/.test(html) && /Pull\.releaseAction\(/.test(html) && !/Math\.max\(0, e\.clientY - startY\)/.test(html)],
   ['score engine inlined, placeholder gone', /<script id="score">[\s\S]*createPlayer[\s\S]*<\/script>/.test(html) && !html.includes('<!--SCORE_JS-->')],
   ['music is synthesised: no <audio> tag or audio file URLs', !/<audio\b|\.(mp3|ogg|wav|m4a|flac)\b/i.test(html)],
   ['music badge present and opt-in (no autoplay)', html.includes('id="sound-btn"') && !/<[^>]*\bautoplay\b/i.test(html)]
