@@ -6,11 +6,14 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "verify": "node scripts/verify.mjs",
-    "check": "npm run build && npm run verify",
-    "preview": "npm run build && npx --yes serve dist"
+    "check": "npm test && npm run build && npm run verify",
+    "preview": "npm run build && npx --yes serve dist",
+    "test": "node --test tests/lofi.test.mjs"
   },
   "devDependencies": {
     "tailwindcss": "3.4.17"
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  }
 }

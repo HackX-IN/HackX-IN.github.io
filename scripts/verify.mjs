@@ -16,7 +16,10 @@ const checks = [
   ['custom font families compiled', /\.font-sans\{font-family:/.test(css)],
   ['no placeholder left behind', !html.includes('<!--TAILWIND_CSS-->')],
   ['single file under 200 KB', html.length < 200 * 1024],
-  ['no innerHTML (XSS surface)', !/\.innerHTML\s*=/.test(html)]
+  ['no innerHTML (XSS surface)', !/\.innerHTML\s*=/.test(html)],
+  ['lofi engine inlined, placeholder gone', /<script id="lofi">[\s\S]*createPlayer[\s\S]*<\/script>/.test(html) && !html.includes('<!--LOFI_JS-->')],
+  ['music is synthesised: no <audio> tag or audio file URLs', !/<audio\b|\.(mp3|ogg|wav|m4a|flac)\b/i.test(html)],
+  ['sound toggle present and opt-in (no autoplay)', html.includes('id="sound-btn"') && !/<[^>]*\bautoplay\b/i.test(html)]
 ];
 let failed = 0;
 for (const [name, ok] of checks) { console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}`); if (!ok) failed++; }

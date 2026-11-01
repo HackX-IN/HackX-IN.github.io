@@ -68,6 +68,18 @@ section{position:relative}
 .js.is-ready #nav{opacity:1}
 .logo{font-family:'Inter Tight',sans-serif;font-weight:900;font-size:22px;letter-spacing:-.06em}
 #menu-btn{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:10px 0 10px 16px}
+.nav-right{display:flex;align-items:center;gap:4px}
+#sound-btn{display:inline-flex;align-items:center;gap:9px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:10px 12px;transition:opacity .3s}
+#sound-btn[hidden]{display:none}
+.eq{display:inline-flex;align-items:flex-end;gap:2px;height:12px}
+.eq i{display:block;width:2px;height:12px;background:currentColor;border-radius:1px;transform-origin:bottom;transform:scaleY(.22);transition:transform .4s var(--ease)}
+#sound-btn[aria-pressed="true"] .eq i{animation:eq 1.15s ease-in-out infinite alternate}
+#sound-btn[aria-pressed="true"] .eq i:nth-child(2){animation-duration:.8s;animation-delay:-.3s}
+#sound-btn[aria-pressed="true"] .eq i:nth-child(3){animation-duration:1.4s;animation-delay:-.7s}
+#sound-btn[aria-pressed="true"] .eq i:nth-child(4){animation-duration:.95s;animation-delay:-.15s}
+#sound-btn.hint{animation:hint 1.8s ease-in-out 3}
+@keyframes eq{from{transform:scaleY(.22)}to{transform:scaleY(1)}}
+@keyframes hint{50%{opacity:.35}}
 #menu{position:fixed;inset:0;z-index:55;background:var(--ink);color:var(--cream);display:flex;flex-direction:column;justify-content:center;padding:90px var(--pad) 40px;opacity:0;visibility:hidden;transition:opacity .45s var(--ease),visibility 0s .45s}
 #menu.open{opacity:1;visibility:visible;transition:opacity .45s var(--ease)}
 #menu a.big{display:block;font-family:'Inter Tight',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:-.05em;line-height:.98;font-size:clamp(2.6rem,11vw,6.5rem);transform:translateY(24px);opacity:0;transition:transform .6s var(--ease),opacity .6s var(--ease),color .2s}
@@ -320,7 +332,12 @@ section{position:relative}
 
 <header id="nav" class="fixed inset-x-0 top-0 z-[60] flex h-[68px] items-center justify-between px-[var(--pad)]">
   <a href="#top" class="logo" aria-label="Inamul, back to top" data-top>IN</a>
-  <button id="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+  <div class="nav-right">
+    <button id="sound-btn" type="button" aria-pressed="false" aria-label="Lofi music" hidden>
+      <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Lofi</span>
+    </button>
+    <button id="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+  </div>
 </header>
 
 <nav id="menu" aria-label="Main menu" aria-hidden="true">
@@ -578,6 +595,7 @@ section{position:relative}
       <p class="mono imprint-sub" style="margin-top:14px;font-size:11px;line-height:1.8">Now: building Vocs. Learning Rust and on-device AI.</p>
       <p class="mono imprint-sub" style="margin-top:14px;font-size:11px;line-height:1.8">React · Next.js · React Native · Expo · Tauri<br>FastAPI · Node.js · PostgreSQL · Supabase · Firebase</p>
       <p class="mono imprint-sub" style="margin-top:14px;font-size:11px;line-height:1.8">GitHub achievements: Pull Shark ×3 · Pair Extraordinaire ×3 · Quickdraw · YOLO</p>
+      <p class="mono imprint-sub" style="margin-top:14px;font-size:11px;line-height:1.8">Music: original lofi, synthesised live in your browser. No samples, nothing to license.</p>
 
       <nav class="socials" aria-label="Social links">
         <a href="https://github.com/HackX-IN" target="_blank" rel="noopener noreferrer"><span>GitHub</span><em>HackX-IN</em><b>↗</b></a>
@@ -631,6 +649,7 @@ section{position:relative}
     </form>
   </div>
 </div>
+<!--LOFI_JS-->
 <script>
 (() => {
 'use strict';
@@ -1239,11 +1258,38 @@ form.addEventListener('submit', e => {
 $$('input,textarea', form).forEach(el => el.addEventListener('input', () => el.closest('.fld').classList.remove('bad')));
 
 /* ================================================================
+   Sound: original generative lofi (src/lofi.js), opt-in, never autoplays
+================================================================ */
+const SOUND_KEY = 'lofi-pref';
+const readPref = () => { try { return localStorage.getItem(SOUND_KEY); } catch (_) { return null; } };
+const writePref = value => { try { localStorage.setItem(SOUND_KEY, value); } catch (_) { /* storage blocked: fine */ } };
+
+function initSound() {
+  const btn = $('#sound-btn');
+  if (!btn || !window.Lofi || !Lofi.isSupported()) return;       // no Web Audio: the button stays hidden
+  const player = Lofi.createPlayer({ onChange: on => btn.setAttribute('aria-pressed', String(on)) });
+  btn.hidden = false;
+  btn.addEventListener('click', async () => {
+    btn.classList.remove('hint');
+    const on = await player.toggle();
+    writePref(on ? 'on' : 'off');
+  });
+  if (readPref() === 'on') {
+    /* returning listener: browsers only allow audio after a gesture, so resume on the first one */
+    const resume = () => { removeEventListener('pointerdown', resume); removeEventListener('keydown', resume); player.start(); };
+    addEventListener('pointerdown', resume); addEventListener('keydown', resume);
+  } else if (!reduce) {
+    setTimeout(() => btn.classList.add('hint'), 6500);           // a gentle nudge, three pulses only
+  }
+}
+
+/* ================================================================
    Boot
 ================================================================ */
 function boot() {
   fp = fpBuild();
   initVocs(); initAlIslam(); initVouch(); initAutomation();
+  initSound();
   layout();
   requestAnimationFrame(frame);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { layout(); });
