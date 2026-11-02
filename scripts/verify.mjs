@@ -17,6 +17,8 @@ const checks = [
   ['no placeholder left behind', !html.includes('<!--TAILWIND_CSS-->')],
   ['single file under 200 KB', html.length < 200 * 1024],
   ['tab title is just the name', /<title>Inamul Hasan<\/title>/.test(html)],
+  ['inline section links in the header', /class="nav-links"/.test(html) && /href="#stack">Capabilities/.test(html)],
+  ['custom cursor present, mouse-only', /id="cursor"/.test(html) && /hover: hover\) and \(pointer: fine/.test(html)],
   ['hero thread cannot start above the viewport', /loopY > startY \+ 50/.test(html)],
   ['no innerHTML (XSS surface)', !/\.innerHTML\s*=/.test(html)],
   ['pull gesture module inlined, placeholder gone', /<script id="pull">[\s\S]*releaseAction[\s\S]*<\/script>/.test(html) && !html.includes('<!--PULL_JS-->')],

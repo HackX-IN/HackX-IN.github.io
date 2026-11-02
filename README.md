@@ -6,7 +6,7 @@ Live: https://hackx-in.github.io/
 
 ## Features
 
-- Signature SVG preloader, scroll-drawn "thread" that links the sections, pull-to-untangle contact interaction
+- Signature SVG preloader, scroll-drawn "thread" that links the sections, pull-to-untangle contact interaction, inline section links on wide screens, a trailing-ring cursor that turns into a labelled disc over actions (mouse only)
 - Interactive project cards with small micro-animations
 - Optional ambient space score, played from an astronaut badge next to MENU: synthesised live with the Web Audio API, so there are no audio files and no copyright. Off by default, never autoplays
 - Keyboard accessible (focus trap in the modal, Esc to close) and honors `prefers-reduced-motion`
