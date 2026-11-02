@@ -57,3 +57,7 @@ Code is MIT-licensed (see `LICENSE`). The personal content (name, biography, pro
 - Fonts load from Google Fonts; self-host them to remove the last third-party request.
 - `prefers-reduced-motion` is honored; the preloader has JS and CSS failsafes.
 - iOS Safari mutes Web Audio while the hardware silent switch is on; that is an OS behaviour, not a bug.
+
+## Credits
+
+- Signature: the strokes are traced from the outlines of [Great Vibes](https://fonts.google.com/specimen/Great+Vibes) by Robert Leuschke (SIL Open Font License 1.1), reduced to single pen lines and inlined as SVG paths. No font file is shipped.
