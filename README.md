@@ -60,4 +60,4 @@ Code is MIT-licensed (see `LICENSE`). The personal content (name, biography, pro
 
 ## Credits
 
-- Signature: the strokes are traced from the outlines of [Great Vibes](https://fonts.google.com/specimen/Great+Vibes) by Robert Leuschke (SIL Open Font License 1.1), reduced to single pen lines and inlined as SVG paths. No font file is shipped.
+- Signature: a hand-drawn single-line signature authored as SVG paths and animated with stroke-dashoffset. No font files are shipped.
