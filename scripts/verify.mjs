@@ -16,6 +16,8 @@ const checks = [
   ['custom font families compiled', /\.font-sans\{font-family:/.test(css)],
   ['no placeholder left behind', !html.includes('<!--TAILWIND_CSS-->')],
   ['single file under 200 KB', html.length < 200 * 1024],
+  ['tab title is just the name', /<title>Inamul Hasan<\/title>/.test(html)],
+  ['hero thread cannot start above the viewport', /loopY > startY \+ 50/.test(html)],
   ['no innerHTML (XSS surface)', !/\.innerHTML\s*=/.test(html)],
   ['pull gesture module inlined, placeholder gone', /<script id="pull">[\s\S]*releaseAction[\s\S]*<\/script>/.test(html) && !html.includes('<!--PULL_JS-->')],
   ['untangle uses the shared gesture maths (any-direction pull)', /Pull\.pullProgress\(/.test(html) && /Pull\.releaseAction\(/.test(html) && !/Math\.max\(0, e\.clientY - startY\)/.test(html)],

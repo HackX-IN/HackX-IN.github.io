@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Inamul Hasan — Senior Full-Stack Developer</title>
+<title>Inamul Hasan</title>
 <meta name="description" content="Inamul Hasan is a senior full-stack developer building web, mobile and developer tools. Vocs, Vouch, Al-Islam and more.">
 <meta name="theme-color" content="#060606">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Inamul Hasan — Senior Full-Stack Developer">
+<meta property="og:title" content="Inamul Hasan">
 <meta property="og:description" content="Products built end to end. Follow the thread.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23060606'/%3E%3Cpath d='M9 6v20' stroke='%23fc3814' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='21' cy='23' r='3' fill='%23fc3814'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -254,10 +254,20 @@ section{position:relative}
 #fp path{fill:none;stroke:var(--red);stroke-width:1.5;stroke-linecap:round}
 #contact{min-height:100svh;padding:clamp(70px,13vw,130px) 0 max(56px,calc(28px + env(safe-area-inset-bottom)));display:flex;flex-direction:column}
 .contact-h{font-size:clamp(2.6rem,12.4vw,9rem)}
-.cta{display:inline-flex;align-items:center;gap:.5em;font-family:'Inter Tight',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:-.04em;font-size:clamp(1.05rem,4.4vw,1.5rem);border-bottom:2px solid var(--cream);padding-bottom:5px;margin-top:clamp(26px,6vw,48px);transition:color .2s,border-color .2s,gap .3s var(--ease)}
+.cta{display:inline-flex;align-self:flex-start;align-items:center;gap:.5em;font-family:'Inter Tight',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:-.04em;font-size:clamp(1.05rem,4.4vw,1.5rem);border-bottom:2px solid var(--cream);padding-bottom:5px;margin-top:clamp(26px,6vw,48px);transition:color .2s,border-color .2s,gap .3s var(--ease)}
 .cta:hover{color:var(--red);border-color:var(--red);gap:.8em}
 .cta svg{width:.7em;height:.7em}
 #tangle{aspect-ratio:1/1.12;margin-top:clamp(10px,4vw,40px)}
+.contact-wrap{display:flex;flex-direction:column;flex:1;width:100%}
+/* Laptop and up: headline + CTA on the left, the knot on the right, the whole section fits one screen. */
+@media (min-width:900px){
+  #contact{padding-top:clamp(96px,15svh,150px)}
+  .contact-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);grid-template-rows:1fr auto auto 1fr auto;column-gap:clamp(24px,5vw,80px)}
+  .contact-h{grid-column:1;grid-row:2;font-size:clamp(2.8rem,6vw,5.4rem)}
+  #talk{grid-column:1;grid-row:3;justify-self:start}
+  #tangle{grid-column:2;grid-row:1/5;align-self:center;aspect-ratio:auto;height:clamp(380px,calc(100svh - 260px),640px);margin:0 0 0 auto}
+  .contact-foot{grid-column:1/-1;grid-row:5}
+}
 .contact-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#9a958c;padding-top:30px}
 .contact-foot a:hover{color:var(--red)}
 .contact-foot .links{display:flex;gap:18px}
@@ -612,7 +622,7 @@ section{position:relative}
 
   <!-- 08 / CONTACT -->
   <section id="contact" class="sec-dark">
-    <div class="wrap" style="display:flex;flex-direction:column;flex:1;width:100%">
+    <div class="wrap contact-wrap">
       <h2 class="h-display contact-h stagger dim-target" data-blur><span>Got an</span><span>idea worth</span><span>untangling?</span></h2>
       <a href="#contact" id="talk" class="cta dim-target">Let's talk. <svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 9 9 1M3 1h6v6" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></a>
       <div id="tangle" class="zone"></div>
@@ -759,6 +769,7 @@ $$('[data-blur], .fade-up').forEach(el => revealIO.observe(el));
    Each segment is drawn by scroll; a head dot leads it, a ring appears at rest.
 ================================================================ */
 const svg = $('#thread');
+const WIDE = matchMedia('(min-width: 900px)');   // keep in sync with the contact layout media query
 const handle = $('#handle'), pullLabel = $('#pull-label');
 const SEG_IDS = ['s0', 's1l', 's1r', 's2', 's3'];
 const segs = SEG_IDS.map(id => {
@@ -850,7 +861,8 @@ function tanglePoints(qq, pl) {
     const sm = t * t * (3 - 2 * t);
     const bx = lerp(x0, x1, sm) + Math.sin(t * Math.PI * 2) * .045 * T.w;
     const by = lerp(y0, y1, t);
-    const env = Math.pow(Math.sin(Math.PI * clamp((t - .04) / .9, 0, 1)), .4);
+    const lead = clamp((t - .04) / .28, 0, 1);                 // wobble fades in over the first ~28% (no hook at the join)
+    const env = Math.pow(Math.sin(Math.PI * clamp((t - .04) / .9, 0, 1)), .4) * lead * lead * (3 - 2 * lead);
     const th = t * Math.PI * 2 * 5.7 + .45, ph = t * Math.PI * 2 * 7.1 + 1.1;
     const ox = env * amp * (Rx * Math.cos(th) + .22 * Rx * Math.cos(t * Math.PI * 2 * 11.3 + 1));
     const oy = env * amp * (Ry * Math.sin(ph) + .18 * Ry * Math.sin(t * Math.PI * 2 * 8.7));
@@ -886,9 +898,12 @@ function layout() {
   const R = id => rectOf($(id));
 
   /* ---- S0: hero swirl → idea → bulb → snake → fork ---- */
+  // Start dot sits just under the header. When the title is low (phones) the thread loops up and over it;
+  // when the title is high (laptops) that loop would leave the screen, so it sweeps down and right instead.
+  const startY = Math.min(110, .13 * vh), loopY = h.y - 1.6 * L;
   const w0 = [
-    W(xl + 5, Math.min(110, .13 * vh)),
-    W(xl + 12, h.y - 1.6 * L),
+    W(xl + 5, startY),
+    loopY > startY + 50 ? W(xl + 12, loopY) : W(xl + .1 * h.w, startY + .45 * (h.y + .05 * L - startY)),
     W(xl + .17 * h.w, h.y + .05 * L),
     W(xl + .27 * h.w, h.y + .62 * L),
     W(xl + .05 * h.w, h.y + 1.2 * L),
@@ -940,7 +955,15 @@ function layout() {
   const im = R('#imprint');
   [[.84, .03], [.97, .18], [.96, .42], [.98, .66], [.97, .94]].forEach(([u, v]) => w2.push(W(X(u), im.y + v * im.h)));
   const ct = R('#contact'), T = R('#tangle');
-  w2.push(W(xe, ct.y + .04 * ct.h), W(xe, ct.y + .16 * ct.h), W(xe - .03 * cw, T.y - .3 * T.h), W(T.x + .8 * T.w, T.y - .12 * T.h), W(T.x + .62 * T.w, T.y));
+  const entryX = T.x + .62 * T.w, lastY = w2[w2.length - 1].y;
+  if (WIDE.matches) {
+    // Knot sits beside the headline: ease from the right edge into it, arriving straight down.
+    const dy = Math.max(120, T.y - lastY);
+    w2.push(W(xe, lastY + .25 * dy), W(lerp(xe, entryX, .4), lastY + .5 * dy), W(entryX, T.y - Math.min(.3 * dy, 110)));
+  } else {
+    w2.push(W(xe, ct.y + .04 * ct.h), W(xe, ct.y + .16 * ct.h), W(xe - .03 * cw, T.y - .3 * T.h), W(T.x + .8 * T.w, T.y - .12 * T.h), W(entryX + .04 * T.w, T.y - .06 * T.h));
+  }
+  w2.push(W(entryX, T.y));
   applyCR(S2, w2);
 
   /* ---- S3: tangle ---- */
